@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="LFTM" basedir="." default="main">
+
+    <property name="src.dir"     value="src"/>
+	<property name="lib.dir" location="lib" />
+    <property name="classes.dir" value="bin"/>
+    <property name="jar.dir"     value="jar"/>
+
+    <property name="main-class"  value="LFTM"/>
+
+	<path id="build.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+    <target name="clean">
+        <delete dir="${classes.dir}"/>
+		<delete dir="${jar.dir}"/>
+    </target>
+
+	<presetdef name="javac">
+		<javac includeantruntime="false" />
+	</presetdef>
+	
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="build.classpath"/>
+    </target>
+	
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+				<attribute name="Class-Path" value="${build.classpath}"/>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+			<zipgroupfileset  dir="${lib.dir}"/>
+        </jar>
+    </target>
+	
+	<target name="run" depends="jar">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="build.classpath"/>
+                <pathelement location="${jar.dir}/${ant.project.name}.jar"/>
+            </classpath>
+        </java>
+    </target>
+	
+    <target name="clean-build" depends="clean,jar"/>
+    <target name="main" depends="clean,compile,jar"/>
+</project>
