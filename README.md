@@ -19,7 +19,7 @@ Users can find the pre-compiled `LFTM.jar` file and source codes in the `jar` an
 
 #### Input corpus format
 
-Similar to the `corpus.txt` file in the `test` folder, each line in the input corpus is a document (i.e. a sequence words/tokens separated by white space characters). The users should preprocess the input corpus before training the topic models, for example: down-casing, removing non-alphabetic characters and stop-words, removing words shorter than 3 characters and words appearing less than a certain times in the input corpus.  
+Similar to the `corpus.txt` file in the `test` folder, each line in the input corpus represents a document (i.e. a sequence words/tokens separated by white space characters). The users should preprocess the input corpus before training the topic models, for example: down-casing, removing non-alphabetic characters and stop-words, removing words shorter than 3 characters and words appearing less than a certain times in the input corpus.  
 
 <b>Note:</b> the users have to remove words/terms which are not found the word vector list.
 
@@ -69,21 +69,23 @@ where parameters in [ ] are optional.
 
 `$ java -jar jar/LFTM.jar -model LFLDA -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 0.6 -initers 2000 -niters 20 -name testLFLDA`
 
-The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras` output files referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model parameters, respectively. Similarly, we perform:
+The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have output files of `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras`,  referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model parameters, respectively. Similarly, we perform:
 
 `$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 0.6 -initers 2000 -niters 20 -name testLFDMM`
 
+We have output files of `testLFDMM.theta`, `testLFDMM.phi`, `testLFDMM.topWords`, `testLFDMM.topicAssignments` and `testLFDMM.paras`.
+
 ### Document clustering evaluation
 
- After using a topic model to calculate the topic probabilities of a document, we assign every document the topic with the highest probability given the document. To get the  clustering scores of Purity and normalized mutual information, we perform:
+Here, we treat each topic as a cluster, and we assign every document the topic with the highest probability given the document. To get the  clustering scores of Purity and normalized mutual information, we perform:
 
-`$ java –jar jar/LFTM.jar –model Eval –label <Golden_label_file_path> -dir <Directory_path> -prob <_suffix>`
+`$ java –jar jar/LFTM.jar –model Eval –label <Golden_label_file_path> -dir <Directory_path> -prob <Document-topic-prob/Suffix>`
 
 * `–label`: Specify the path to the ground truth label file. Each line in this label file contains the golden label of the corresponding document in the input training corpus. See the `corpus.LABEL` and `corpus.txt` files in the `test` folder.
 
 * `-dir`: Specify the path to the directory containing document-to-topic distribution files.
 
-* `-prob`: Specify a document-to-topic distribution file or a group of document-to-topic distribution files.
+* `-prob`: Specify a document-to-topic distribution file or a group of document-to-topic distribution files in the specified directory.
 
 <b>Examples:</b>
 
