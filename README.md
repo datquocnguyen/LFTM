@@ -33,7 +33,9 @@ Some sets of pre-trained word vectors can be found at:
 
 [Glove: http://nlp.stanford.edu/projects/glove/](http://nlp.stanford.edu/projects/glove/)
 
-To speed up the training process, the users may consider to use the pre-trained 50-dimensional vectors in Glove. When adapting to different domains, for example in the biomedical domain, the users can employ Word2Vec or Glove for learning 50-dimensional word vectors on the MEDLINE corpus.
+To speed up the training process, the users may consider to use the pre-trained 50-dimensional word vectors in Glove. When adapting to different domains, for example in the biomedical domain, the users can employ Word2Vec or Glove to learn 25/50-dimensional word vectors on the MEDLINE corpus.
+
+Instead of using the pre-trained word vectors learned from external corpora, the users may use the word vectors which are trained on the experimental topic-modeling corpus. 
 
 ### Training LF-LDA and LF-DMM
 
