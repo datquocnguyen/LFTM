@@ -4,9 +4,9 @@ Implementations of the LF-LDA and LF-DMM latent feature topic models, as describ
 
 Dat Quoc Nguyen, Richard Billingsley, Lan Du and Mark Johnson. 2015. [Improving Topic Models with Latent Feature Word Representations](https://tacl2013.cs.columbia.edu/ojs/index.php/tacl/article/view/582). <i>Transactions of the Association for Computational Linguistics</i>, vol. 3, pp. 299-313. [[.bib]](http://web.science.mq.edu.au/~dqnguyen/papers/TACL.bib)
 
-<b>NOTE (30/6/2015):</b> When optimizing source codes for sharing, I found a common bug in both my implementations for the DMM and LF-DMM topic models. It changed the document clustering and document classification results for DMM and LF-DMM. However, <i>this does not affect the conclusions of the TACL paper</i>. In fact, in clustering and classification tasks, LF-DMM obtains 5+% absolute improvements on short text datasets against DMM, instead of 3+% improvements as presented in the TACL paper. See more details at [DMM-LFDMM-ResultErratum.pdf](http://web.science.mq.edu.au/~dqnguyen/papers/ResultErratum.pdf)
+<b>NOTE (30/6/2015):</b> Change in clustering and classification results due to the DMM and LF-DMM bugs. In fact, LF-DMM obtains 5+% absolute improvements on short text datasets against DMM, instead of 3+% improvements as presented in the original published TACL paper.  See more details at [HERE](http://web.science.mq.edu.au/~dqnguyen/papers/ResultErratum.pdf).
 
-The source codes for LDA and DMM are available at  [http://jldadmm.sourceforge.net/](http://jldadmm.sourceforge.net/)
+The source codes for the LDA and DMM models are available at  [http://jldadmm.sourceforge.net/](http://jldadmm.sourceforge.net/)
 
 Due to restrictions of Twitter, I  cannot offer a public download for the preprocessed Twitter dataset used in the TACL paper (the corresponding Tweet IDs can be found at [Sanders Analytics](http://www.sananalytics.com/lab/twitter-sentiment/)). The other preprocessed experimental datasets can be found [HERE](http://web.science.mq.edu.au/~dqnguyen/papers/TACL-datasets.zip). 
 
@@ -15,13 +15,11 @@ Due to restrictions of Twitter, I  cannot offer a public download for the prepro
 
 This section is to describe the usage of the implementations  in command line or terminal, employing the pre-compiled `LFTM.jar` file. Here, we supposed that Java 1.7+ is set to run in command line or terminal (e.g. adding Java to the environment variable `path` in Windows OS).
 
-Users can find the pre-compiled `LFTM.jar` file and source codes in the `jar` and `src` folders, respectively. The users can recompile the source codes, simply running `ant` (also supposed that `ant` is already installed). In addition, uses can find input examples in the `test` folder.
+Users can find the pre-compiled `LFTM.jar` file and source codes in the `jar` and `src` folders, respectively. The users can recompile the source codes, simply running `ant` (also supposed that `ant` is already installed). In addition, users can find input examples in the `test` folder.
 
 #### Input corpus format
 
-Similar to the `corpus.txt` file in the `test` folder, each line in the input corpus represents a document (i.e. a sequence words/tokens separated by white space characters). The users should preprocess the input corpus before training the topic models, for example: down-casing, removing non-alphabetic characters and stop-words, removing words shorter than 3 characters and words appearing less than a certain times in the input corpus.  
-
-<b>Note:</b> the users have to remove words/terms which are not found the word vector list.
+Similar to the `corpus.txt` file in the `test` folder, each line in the input topic-modeling corpus represents a document (i.e. a sequence words/tokens separated by white space characters). The users should preprocess the input topic-modeling corpus before training the topic models, for example: down-casing, removing non-alphabetic characters and stop-words, removing words shorter than 3 characters and words appearing less than a certain times in the input topic-modeling corpus.  
 
 #### Input vector format
 
@@ -33,9 +31,11 @@ Some sets of pre-trained word vectors can be found at:
 
 [Glove: http://nlp.stanford.edu/projects/glove/](http://nlp.stanford.edu/projects/glove/)
 
-To speed up the training process, the users may consider to use the pre-trained 50-dimensional word vectors in Glove. When adapting to different domains, for example in the biomedical domain, the users can employ Word2Vec or Glove to learn 25/50-dimensional word vectors on the MEDLINE corpus.
+To speed up the training process, the users may consider to using the pre-trained 50-dimensional word vectors in Glove. When adapting to different domains, for example in the biomedical domain, the users can employ Word2Vec or Glove to learn 25 or 50-dimensional word vectors on the MEDLINE corpus.
 
-Instead of using the pre-trained word vectors learned from external corpora, the users may use the word vectors which are trained on the experimental topic-modeling corpus. 
+When using the pre-trained word vectors learned from large <b>external</b> corpora, the users have to remove words in the input topic-modeling corpus, in which these words are not found the word vector file.
+
+<b>Note:</b> The users might consider to use the word vectors which are trained on the input topic-modeling corpus. In this manner, it is expected that the dimension of every word vector is small (for example: 25 or 50). 
 
 ### Training LF-LDA and LF-DMM
 
@@ -55,7 +55,7 @@ where parameters in [ ] are optional.
 
 * `-beta <double>`: Specify the hyper-parameter beta. The default value is 0.01.
 
-* `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). The default value is 0.6.
+* `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). The default value is 0.6. Note: to obtain the highest topic coherence score, the mixture weight lambda should be set to 1.0.
 
 * `-initers <int>`: Specify the number of initial sampling iterations to separate the counts for latent feature and Dirichlet multinomial components. The default value is 2000.
 
@@ -76,6 +76,10 @@ The output files are saved in the same folder as the input training corpus file,
 `$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 0.6 -initers 2000 -niters 20 -name testLFDMM`
 
 We have output files of `testLFDMM.theta`, `testLFDMM.phi`, `testLFDMM.topWords`, `testLFDMM.topicAssignments` and `testLFDMM.paras`.
+
+`Note`: in the LF-LDA and LF-DMM latent feature topic models, a word is generated by a latent feature topic-to-word component OR by a topic-to-word Dirichlet multinomial component. In actual implementation, instead of using a binary selection variable to record this, I simply add a value of the number of topics to the actual topic assigment value. For example with 20 topics:
+
+The output topic assignment "3 23 4 4 24 3 23 3 23 3 23" for a document means that the first word in the document is generated from topic 3 by the latent feature topic-to-word component. The second word is also generated from the same topic 3 (= 23 - 20), but by the  Dirichlet multinomial component. It is similar for other words in the document.
 
 ### Document clustering evaluation
 
