@@ -2,8 +2,7 @@
 
 The implementations of the LF-LDA and LF-DMM latent feature topic models, as described in my TACL paper:
 
-Dat Quoc Nguyen, Richard Billingsley, Lan Du and Mark Johnson. [Improving Topic Models with Latent Feature Word Representations](https://tacl2013.cs.columbia.edu/ojs/index.php/tacl/article/view/582/158). <i>Transactions of the Association for Computational Linguistics</i>, vol. 3, pp. 299-313, 2015.
-[[Datasets]](http://web.science.mq.edu.au/~dqnguyen/papers/TACL-datasets.zip) [[.bib]](http://web.science.mq.edu.au/~dqnguyen/papers/TACL.bib)
+Dat Quoc Nguyen, Richard Billingsley, Lan Du and Mark Johnson. [Improving Topic Models with Latent Feature Word Representations](https://tacl2013.cs.columbia.edu/ojs/index.php/tacl/article/view/582/158). <i>Transactions of the Association for Computational Linguistics</i>, vol. 3, pp. 299-313, 2015. [[.bib]](http://web.science.mq.edu.au/~dqnguyen/papers/TACL.bib) [[Datasets]](http://web.science.mq.edu.au/~dqnguyen/papers/TACL-datasets.zip) [[Example_20Newsgroups_20Topics_Top50Words]](http://web.science.mq.edu.au/~dqnguyen/papers/TACL_TopWords_N20_20Topics.zip)
 
 The implementations  of the LDA and DMM topic models are available at  [http://jldadmm.sourceforge.net/](http://jldadmm.sourceforge.net/)
 
@@ -23,7 +22,7 @@ Similar to the `corpus.txt` file in the `test` folder, each line in the input to
 
 Similar to the `wordVectors.txt` file in the `test` folder, each line in the input word-vector file starts with a word type which is followed by a vector representation.
 
-To obtain the vector representations of words, the users can use the pre-trained word vectors learned from large external corpora OR the word vectors which are trained on the input topic-modeling corpus. 
+To obtain the vector representations of words, the users can use `the pre-trained word vectors learned from large external corpora` OR `the word vectors which are trained on the input topic-modeling corpus`. 
 
 In case of using the pre-trained word vectors learned from the large external corpora, the users have to remove words in the input topic-modeling corpus, in which these words are not found in the input word-vector file.
 
@@ -31,11 +30,10 @@ Some sets of the pre-trained word vectors can be found at:
 
 [Word2Vec: https://code.google.com/p/word2vec/](https://code.google.com/p/word2vec/)
 
-[Glove: http://nlp.stanford.edu/projects/glove/](http://nlp.stanford.edu/projects/glove/)
+[Glove: http://nlp.stanford.edu/projects/glove/](http://nlp.stanford.edu/projects/glove/) 
 
-Tip: if the input topic-modeling corpus is too domain-specific, the domain of the external corpus (from which the word vectors are derived) should not be too different to that of the input topic-modeling corpus. For example, when applied to the  biomedical domain, the users may use Word2Vec or Glove to learn 50 or 100-dimensional word vectors on the large external MEDLINE corpus.
+If the input topic-modeling corpus is too domain-specific, the domain of the external corpus (from which the word vectors are derived) should not be too different to that of the input topic-modeling corpus. For example, when applying to the  biomedical domain, the users may use Word2Vec or Glove to learn 50 or 100-dimensional word vectors on the large external MEDLINE corpus instead of using the pre-trained Word2Vec or Glove word vectors. 
 
-The users might consider using the word vectors which are trained on the input topic-modeling corpus. In this case, the vector size should be small (for example: 25 or 50-dimensional vectors). 
 
 ### Training LF-LDA and LF-DMM
 
@@ -55,11 +53,11 @@ where parameters in [ ] are optional.
 
 * `-beta <double>`: Specify the hyper-parameter beta. The default value is 0.01.
 
-* `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). The default value is 0.6. Note: the mixture weight lambda 1.0 likely produces highest topic coherence scores.
+* `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). The default value is 0.6. NOTE that the mixture weight lambda 1.0 likely produces highest topic coherence scores.
 
 * `-initers <int>`: Specify the number of initial sampling iterations to separate the counts for the latent feature component and the Dirichlet multinomial component. The default value is 2000.
 
-* `-niters <int>`: Specify the number of sampling iterations for the latent feature topic models. The default value is 200.
+* `-niters <int>`: Specify the number of sampling iterations for the latent feature topic models. The default value is 200. For experiments presented in the TACL paper, `-initers` and `-niters` are set to 1500 and 500, respectively. However, I found `-niters` at `200` is sufficient for such small experimental corpora. 
 
 * `-twords <int>`: Specify the number of the most probable topical words. The default value is 20.
 
@@ -69,15 +67,15 @@ where parameters in [ ] are optional.
 
 <b>Examples:</b>
 
-`$ java -jar jar/LFTM.jar -model LFLDA -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 0.6 -initers 2000 -niters 20 -name testLFLDA`
+`$ java -jar jar/LFTM.jar -model LFLDA -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 1.0 -initers 500 -niters 50 -name testLFLDA`
 
-The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have output files of `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras`,  referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model parameters, respectively. Similarly, we perform:
+Basically, with this command we run 500 `LDA` sampling iterations (i.e., `-initers 500`) for initialization and then run 50 `LF-LDA` sampling iterations (i.e., `-niters 50`).  The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have output files of `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras`,  referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model parameters, respectively. Similarly, we perform:
 
-`$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 0.6 -initers 2000 -niters 20 -name testLFDMM`
+`$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 1.0 -initers 500 -niters 50 -name testLFDMM`
 
 We have output files of `testLFDMM.theta`, `testLFDMM.phi`, `testLFDMM.topWords`, `testLFDMM.topicAssignments` and `testLFDMM.paras`.
 
-In the LF-LDA and LF-DMM latent feature topic models, a word is generated by the latent feature topic-to-word component OR by the topic-to-word Dirichlet multinomial component. In actual implementation, instead of using a binary selection variable to record that, I simply add a value of the number of topics to the actual topic assignment value. For example with 20 topics, the output topic assignment `3 23 4 4 24 3 23 3 23 3 23` for a document means that the first word in the document is generated from topic 3 by the latent feature topic-to-word component. The second word is also generated from the same topic 3 (= 23 - 20), but by the topic-to-word Dirichlet multinomial component. It is similar for the remaining words in the document.
+In the LF-LDA and LF-DMM latent feature topic models, a word is generated by the latent feature topic-to-word component OR by the topic-to-word Dirichlet multinomial component. In practical implementation, instead of using a binary selection variable to record that, I simply add a value of the number of topics to the actual topic assignment value. For example with 20 topics, the output topic assignment `3 23 4 4 24 3 23 3 23 3 23` for a document means that the first word in the document is generated from topic 3 by the latent feature topic-to-word component. The second word is also generated from the topic `23 - 20 = 3`, but by the topic-to-word Dirichlet multinomial component. It is similar for the remaining words in the document.
 
 ### Document clustering evaluation
 
