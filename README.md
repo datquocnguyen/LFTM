@@ -53,8 +53,9 @@ where parameters in [ ] are optional.
 
 * `-beta <double>`: Specify the hyper-parameter beta. The default value is 0.01.
 
-* `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). The default value is 0.6. NOTE that the mixture weight lambda 1.0 likely produces highest topic coherence scores.
-
+* `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). Set the mixture weight lambda to be 1.0 to obtain the best topic coherence. 
+In case of document clustering/classification evaluation, fine-tune this parameter to obtain the highest results if you have time; otherwise try both values 0.6 and 1.0. The default lambda value of 0.6 is from our TACL paper, which is tuned only on one experimental dataset and reused, so it might not be optimal value for other particular corpora (e.g you even obtain higher clustering/classification scores on the short text TagMyNews and Twitter datasets than we reported if you re-run the LF-DMM with lambda value 1.0). I would suggest to set lambda 0.6 for normal text corpora and 1.0 for short text corpora if you really don't have time to try both. 
+ 
 * `-initers <int>`: Specify the number of initial sampling iterations to separate the counts for the latent feature component and the Dirichlet multinomial component. The default value is 2000.
 
 * `-niters <int>`: Specify the number of sampling iterations for the latent feature topic models. The default value is 200. For experiments presented in the TACL paper, `-initers` and `-niters` are set to 1500 and 500, respectively. However, I found `-niters` at `200` is sufficient for such small experimental corpora. 
