@@ -27,6 +27,7 @@ import cc.mallet.types.MatrixOps;
  * Improving Topic Models with Latent Feature Word Representations. Transactions
  * of the Association for Computational Linguistics, vol. 3, pp. 299-313.
  * 
+ * Inference of topic distribution on unseen corpus
  * 
  * @author Dat Quoc Nguyen
  */
