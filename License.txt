@@ -1,6 +1,6 @@
 Implementations of the LF-LDA and LF-DMM latent feature topic models
 
-Copyright (C) 2015 by Dat Quoc Nguyen 
+Copyright (C) 2015-2016 by Dat Quoc Nguyen 
 dat.nguyen@students.mq.edu.au
 Department of Computing, Macquarie University, Australia
 	

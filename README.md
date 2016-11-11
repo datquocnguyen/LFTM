@@ -39,7 +39,7 @@ If the input topic-modeling corpus is too domain-specific, the domain of the ext
 
 `$ java [-Xmx2G] -jar jar/LFTM.jar –model <LFLDA_or_LFDMM> -corpus <Input_corpus_file_path> -vectors <Input_vector_file_path> [-ntopics <int>] [-alpha <double>] [-beta <double>] [-lambda <double>] [-initers <int>] [-niters <int>] [-twords <int>] [-name <String>] [-sstep <int>]`
 
-where parameters in [ ] are optional.
+where hyper-parameters in [ ] are optional.
 
 * `-model`: Specify the topic model.
 
@@ -54,11 +54,11 @@ where parameters in [ ] are optional.
 * `-beta <double>`: Specify the hyper-parameter beta. The default value is 0.01.
 
 * `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). Set the mixture weight lambda to be 1.0 to obtain the best topic coherence. 
-In case of document clustering/classification evaluation, fine-tune this parameter to obtain the highest results if you have time; otherwise try both values 0.6 and 1.0. The default lambda value of 0.6 is from our TACL paper, which is tuned only on one experimental dataset, so it might not be the optimal value for other particular corpora (e.g you even obtain higher clustering/classification scores on the short text TagMyNews and Twitter datasets than we reported if you re-run LF-DMM with lambda value 1.0). For document clustering/classification evaluation, I would suggest to set lambda 0.6 for normal text corpora and 1.0 for short text corpora if you don't have time to fine-tune or try both 0.6 and 1.0. 
+In case of document clustering/classification evaluation, fine-tune this parameter to obtain the highest results if you have time; otherwise try both values 0.6 and 1.0 (I would suggest to set lambda 0.6 for normal text corpora and 1.0 for short text corpora if you don't have time to try both 0.6 and 1.0). 
  
 * `-initers <int>`: Specify the number of initial sampling iterations to separate the counts for the latent feature component and the Dirichlet multinomial component. The default value is 2000.
 
-* `-niters <int>`: Specify the number of sampling iterations for the latent feature topic models. The default value is 200. For experiments presented in the TACL paper, `-initers` and `-niters` are set to 1500 and 500, respectively. However, I found `-niters` at `200` is sufficient for such small experimental corpora. 
+* `-niters <int>`: Specify the number of sampling iterations for the latent feature topic models. The default value is 200. 
 
 * `-twords <int>`: Specify the number of the most probable topical words. The default value is 20.
 
@@ -70,7 +70,7 @@ In case of document clustering/classification evaluation, fine-tune this paramet
 
 `$ java -jar jar/LFTM.jar -model LFLDA -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 1.0 -initers 500 -niters 50 -name testLFLDA`
 
-Basically, with this command we run 500 `LDA` sampling iterations (i.e., `-initers 500`) for initialization and then run 50 `LF-LDA` sampling iterations (i.e., `-niters 50`).  The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have output files of `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras`,  referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model parameters, respectively. Similarly, we perform:
+Basically, with this command we run 500 `LDA` sampling iterations (i.e., `-initers 500`) for initialization and then run 50 `LF-LDA` sampling iterations (i.e., `-niters 50`).  The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have output files of `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras`,  referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model hyper-parameters, respectively. Similarly, we perform:
 
 `$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 1.0 -initers 500 -niters 50 -name testLFDMM`
 
@@ -97,6 +97,20 @@ The command `$ java -jar jar/LFTM.jar -model Eval -label test/corpus.LABEL -dir 
 The command `$ java -jar jar/LFTM.jar -model Eval -label test/corpus.LABEL -dir test -prob testLFDMM.theta` will produce the clustering score for  `testLFDMM.theta` file.
 
 The command `$ java -jar jar/LFTM.jar -model Eval -label test/corpus.LABEL -dir test -prob theta` will produce the clustering scores for all the document-to-topic distribution files having names ended by `theta`. In this case, the distribution files are `testLFLDA.theta` and `testLFDMM.theta`. It also provides the mean and standard deviation of the clustering scores.
+
+### Inference of topic distribution on unseen corpus
+
+To infer topics on an unseen/new corpus using a pre-trained LF-LDA/LF-DMM topic model, we perform:
+
+`$ java -jar jar/LFTM.jar -model <LFLDAinf_or_LFDMMinf> -paras <Hyperparameter_file_path> -corpus <Unseen_corpus_file_path> [-initers <int>] [-niters <int>] [-twords <int>] [-name <String>] [-sstep <int>]`
+
+* `-paras`: Specify the path to the hyper-parameter file produced by the pre-trained LF-LDA/LF-DMM topic model.
+
+<b>Examples:</b>
+
+`$ java -jar jar/LFTM.jar -model LFLDAinf -paras test/testLFLDA.paras -corpus test/corpus_test.txt -initers 500 -niters 50 -name testLFLDAinf`
+
+`$ java -jar jar/LFTM.jar -model LFDMMinf -paras test/testLFDMM.paras -corpus test/corpus_test.txt -initers 500 -niters 50 -name testLFDMMinf`
 
 ## Acknowledgments
 
