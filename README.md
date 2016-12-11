@@ -66,7 +66,7 @@ In case of document clustering/classification evaluation, fine-tune this paramet
 
 * `-sstep <int>`: Specify a step to save the sampling output (`-sstep` value < `-niters` value). The default value is 0 (i.e. only saving the output from the last sample).
 
-NOTE that (topic vectors are learned in parallel, so) running LFTM code with multi-CPUs to obtain a significantly faster training process, e.g. using a multi-CPUs computer, or set number of CPUs requested for a remote job to be equal to number of topics.
+NOTE that (topic vectors are learned in parallel, so) running LFTM code with multiple CPU/core machine to obtain a significantly faster training process, e.g. using a multi-core computer, or set number of CPUs requested for a remote job to be equal to number of topics.
 
 <b>Examples:</b>
 
