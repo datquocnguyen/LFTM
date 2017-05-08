@@ -49,9 +49,9 @@ where hyper-parameters in [ ] are optional.
 
 * `-ntopics <int>`: Specify the number of topics. The default value is 20.
 
-* `-alpha <double>`: Specify the hyper-parameter alpha. The default value is 0.1.
+* `-alpha <double>`: Specify the hyper-parameter alpha. Following [1, 2], the default value is 0.1.
 
-* `-beta <double>`: Specify the hyper-parameter beta. The default value is 0.01.
+* `-beta <double>`: Specify the hyper-parameter beta. The default value is 0.01. Following [2], you might also want to  try beta value of 0.1 for short texts.
 
 * `-lambda <double>`: Specify the mixture weight lambda (0.0 < lambda <= 1.0). Set the mixture weight lambda to be 1.0 to obtain the best topic coherence. 
 In case of document clustering/classification evaluation, fine-tune this parameter to obtain the highest results if you have time; otherwise try both values 0.6 and 1.0 (I would suggest to set lambda 0.6 for normal text corpora and 1.0 for short text corpora if you don't have time to try both 0.6 and 1.0). 
@@ -74,7 +74,7 @@ NOTE that (topic vectors are learned in parallel, so) running LFTM code with mul
 
 Basically, with this command we run 500 `LDA` sampling iterations (i.e., `-initers 500`) for initialization and then run 50 `LF-LDA` sampling iterations (i.e., `-niters 50`).  The output files are saved in the same folder as the input training corpus file, in this case in the `test` folder. We have output files of `testLFLDA.theta`, `testLFLDA.phi`, `testLFLDA.topWords`, `testLFLDA.topicAssignments` and `testLFLDA.paras`,  referring to the document-to-topic distributions, topic-to-word distributions, top topical words, topic assignments and model hyper-parameters, respectively. Similarly, we perform:
 
-`$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.01 -lambda 1.0 -initers 500 -niters 50 -name testLFDMM`
+`$ java -jar jar/LFTM.jar -model LFDMM -corpus test/corpus.txt -vectors test/wordVectors.txt -ntopics 4 -alpha 0.1 -beta 0.1 -lambda 1.0 -initers 500 -niters 50 -name testLFDMM`
 
 We have output files of `testLFDMM.theta`, `testLFDMM.phi`, `testLFDMM.topWords`, `testLFDMM.topicAssignments` and `testLFDMM.paras`.
 
@@ -117,3 +117,9 @@ To infer topics on an unseen/new corpus using a pre-trained LF-LDA/LF-DMM topic 
 ## Acknowledgments
 
 The LF-LDA and LF-DMM implementations used utilities including the LBFGS implementation from [MALLET toolkit](http://mallet.cs.umass.edu/), the random number generator in [Java version of MersenneTwister](http://cs.gmu.edu/~sean/research/), the `Parallel.java` utility from [Mines Java Toolkit](http://dhale.github.io/jtk/api/edu/mines/jtk/util/Parallel.html) and the [Java command line arguments parser](http://args4j.kohsuke.org/sample.html).  I would like to thank the authors of the mentioned utilities for sharing the codes.
+
+## References
+
+[1] Yue Lu, Qiaozhu Mei, and ChengXiang Zhai. 2011. Investigating task performance of probabilistic topic models: an empirical study of PLSA and LDA. Information Retrieval, 14:178–203.
+
+[2] Jianhua Yin and Jianyong Wang. 2014. A Dirichlet Multinomial Mixture Model-based Approach for Short Text Clustering. In Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, pages 233–242.
